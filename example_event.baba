@@ -1,0 +1,50 @@
+$event is
+    x is 20
+    y is 40 
+    id is 10
+    name is test
+    $page 1 is
+        trigger is action
+        move_animation is on
+
+        $graphic is
+            name is test
+            hue is 0
+            direction is down
+            step is 0
+            blending is normal
+            opacity is 255
+        endgraphic
+    
+        $condition is
+            switch 5 is on
+        endcondition
+    
+        $movement is 
+            type is fixed
+            speed is 3
+            frequency is 3
+        endmovement
+    
+        $commands are
+            say "hello world!"
+            say "[FUCK]"
+            $textbox
+                position is middle
+                window is hidden
+            endtextbox
+            $choices is 
+                choices are "yes" "no"
+                cancel is 1
+                if 1
+                    say "test"
+                endif
+                if 2
+                    say "test"
+                endif
+            endchoices
+            
+        endcommands
+
+    endpage
+endevent

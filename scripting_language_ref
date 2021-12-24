@@ -1,0 +1,51 @@
+
+
+
+------ Not the Chosen One----
+list 1 commands do
+    show text "hi"
+    set switch 50 to true
+
+
+-----The chosen one------
+page 1 do
+    show text hi
+    set switch 50 to true
+    script 
+
+    set variable 75 to random between 20 and 50
+
+    if switch 20 is true
+        move left 2
+        wait 4 frames
+        wait 4 seconds
+    endif
+endpage
+-----The chosen one------
+
+------ Not the Chosen One----
+Event Name "BLIP" set Graphic "BLIP.png" Hue 0
+
+Event: "Name", "Graphic", "x", "y"
+
+Event>
+Page id:1 graphic:"name">
+    text :)
+Page>
+Event>
+
+page 1 do
+
+show text hi
+set switch 50 to true
+script 
+
+set variable 75 to random between 20 and 50
+
+if switch 20 is true
+move left 2
+wait 4 frames
+wait 4 seconds
+------ Not the Chosen One----
+
+Keywords:
