@@ -1,4 +1,4 @@
-$event is
+$event 1 is
     x is 20
     y is 40 
     id is 10
@@ -35,16 +35,18 @@ $event is
             $textbox
                 position is MIDDLE
                 window is off
-            endtextbox
+            end textbox
             $choices is 
                 choices are "yes" "no"
                 cancel is 1
                 if 1
                     say "test"
-                endif
+                else
+                    say "test2"
+                end if
                 if 2
                     say "test"
-                endif
+                end if
             end choices
         end commands
     end page
