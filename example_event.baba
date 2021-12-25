@@ -2,36 +2,39 @@ $event is
     x is 20
     y is 40 
     id is 10
-    name is test
+    name is "test"
     $page 1 is
-        trigger is action
+        trigger is ACTION
         move_animation is on
 
         $graphic is
-            name is test
+            name is "test"
             hue is 0
-            direction is down
+            direction is DOWN
             step is 0
-            blending is normal
+            blending is NORMAL
             opacity is 255
-        endgraphic
+        end graphic
     
         $condition is
             switch 5 is on
-        endcondition
+        end condition
     
         $movement is 
-            type is fixed
+            type is FIXED
             speed is 3
             frequency is 3
-        endmovement
-    
+        end movement
+        >> Test Comment
         $commands are
             say "hello world!"
             say "[FUCK]"
+            say "multiline string test
+                 woah multiline string!"
+            say "string with \"strings\" in it!"
             $textbox
-                position is middle
-                window is hidden
+                position is MIDDLE
+                window is off
             endtextbox
             $choices is 
                 choices are "yes" "no"
@@ -42,9 +45,7 @@ $event is
                 if 2
                     say "test"
                 endif
-            endchoices
-            
-        endcommands
-
-    endpage
-endevent
+            end choices
+        end commands
+    end page
+end event
