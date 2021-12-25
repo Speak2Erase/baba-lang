@@ -104,6 +104,7 @@ module Parser
       gameover
       return_title
       eval
+      raw_command
     ]
 
     class << self
