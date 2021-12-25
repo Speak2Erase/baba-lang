@@ -129,10 +129,10 @@ module Parser
             if char == '"' && previous_char != '\\'
               in_string = !in_string
             end
-            if current_token == ">>" && previous_char == '\\'
+            if current_token == ">>" && previous_char != '\\'
               comment = true
             end
-            if current_token == "end"
+            if current_token == "end" && previous_char != '\\'
               end_statement = true
             end
 
