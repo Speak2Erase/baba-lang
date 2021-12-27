@@ -1,7 +1,6 @@
 $event 1 is
     x is 20
     y is 40 
-    id is 10
     name is "test"
     $page 1 is
         trigger is ACTION
@@ -17,14 +16,20 @@ $event 1 is
         end graphic
     
         $condition is
-            switch 5 is on
+            switch 5
         end condition
     
-        $movement is 
-            type is FIXED
-            speed is 3
-            frequency is 3
-        end movement
+        move_speed = 3
+        move_frequency = 3
+        move_type = CUSTOM
+
+        $move_route is
+            move RIGHT
+            move DOWN
+            move LEFT
+            move UP 
+        end move_route
+
         >> Test Comment
         $commands are
             say "hello world!"
@@ -32,7 +37,7 @@ $event 1 is
             say "multiline string test
                  woah multiline string!"
             say "string with \"strings\" in it!"
-            $textbox
+            $textbox is
                 position is MIDDLE
                 window is off
             end textbox

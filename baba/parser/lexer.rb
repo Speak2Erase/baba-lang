@@ -110,6 +110,22 @@ class BaBaParser
       return_title
       eval
       raw_command
+      # Move route commands
+      move
+      step
+      jump
+      turn
+      change_speed
+      change_frequency
+      move_animation
+      stop_animation
+      direction_fix
+      through
+      always_on_top
+      graphic
+      opacity
+      blending
+      eval
     ]
 
     def initialize(string)
@@ -154,7 +170,7 @@ class BaBaParser
 
           # Figure out what the hell the token is
           case current_token
-          when "is" || "are"
+          when /(is|are)/
             line_tokens << [TOKENS[:is], current_token]
             current_token = ""
             next
