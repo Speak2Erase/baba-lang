@@ -17,14 +17,39 @@ class BaBaParser
     :$textbox,
   ]
 
+  CONSTANTS = []
+
+  ALIASES = {
+    "name" => "character_name",
+    "hue" => "character_hue",
+    "step" => "pattern",
+    "walk_animation" => "walk_anime",
+    "step_animation" => "step_anime",
+    "blending" => "blend_type",
+  }
+
+  COMMAND_ALIASES = {
+    "say" => 101,
+    "switch" => 121,
+    "variable" => 122,
+    "self_switch" => 123,
+  }
+
   TOKENS = Lexer::TOKENS
 
   def parse(code)
     eof = false
     ast = AST.parse(Lexer.new(code))
+
     @scope = []
     @object_scope = []
     @events = {}
+    @is = true
+    @var = nil
+    @string = ""
+    @in_string = false
+    @in_list = false
+
     ap ast, { raw: true }
     ast.each do |node|
       process_node(node)
@@ -91,11 +116,118 @@ class BaBaParser
         end
 
         @object_scope << move_route
+      when :$commands
+        @in_list = true
       end
     when TOKENS[:end]
+      if node.parent[0][1] == "end commands"
+        in_list = false
+      end
       @object_scope.pop
     when TOKENS[:is]
+      @is = true
+    when TOKENS[:var]
+      @var = node.parent[0][1]
+      begin
+        eval("@object_scope.last.#{@var}")
+      rescue
+        raise "Variable #{@var} not found" if ALIASES[@var].nil?
+        eval("@object_scope.last.#{ALIASES[@var]}")
+      end
+    when TOKENS[:int]
+      value = node.parent[0][1].to_i
+      if @is
+        begin
+          eval("@object_scope.last.#{@var} = #{value}")
+        rescue
+          raise "Variable #{@var} not found" if ALIASES[@var].nil?
+          eval("@object_scope.last.#{ALIASES[@var]} = #{value}")
+        end
+      end
+      @is = false
+      @var = nil
+    when TOKENS[:bool]
+      value = node.parent[0][1].to_b
+      if @is
+        begin
+          eval("@object_scope.last.#{@var} = #{value}")
+        rescue
+          raise "Variable #{@var} not found" if ALIASES[@var].nil?
+          eval("@object_scope.last.#{ALIASES[@var]} = #{value}")
+        end
+      end
+      @is = false
+      @var = nil
+    when TOKENS[:constant]
+      @var = nil
+      @is = false
+    when TOKENS[:string_mark]
+      @in_string = !@in_string
+      unless @in_string
+        if @is
+          begin
+            eval("@object_scope.last.#{@var} = #{@string}")
+          rescue
+            raise "Variable #{@var} not found" if ALIASES[@var].nil?
+            eval("@object_scope.last.#{ALIASES[@var]} = #{@string}")
+          end
+        end
+        @is = false
+        @var = nil
+        @string = ""
+      end
+    when TOKENS[:string]
+      if @in_string
+        @string += node.parent[0][1]
+      end
+    when TOKENS[:command]
+      command = RPG::EventCommand.new
+      command.code = COMMAND_ALIASES[node.parent[0][1]]
+
+      if !@in_list && @object_scope.last.is_a?(RPG::Event::Page::Condition)
+        condition = @object_scope.last
+        case command.code
+        when 121
+          unless condition.switch1_valid
+            condition.switch1_valid = true
+
+            condition.switch1_id = node.children[0].parent[0][1].to_i
+          else
+            condition.switch2_valid = true
+            condition.switch2_id = node.children[0].parent[0][1].to_i
+          end
+        when 122
+          condition.variable_id = node.children[0].parent[0][1].to_i
+          condition.variable_value = node.children[2].parent[0][1].to_i
+          condition.variable_valid = true
+          node.children.delete_at(1)
+        when 123
+        else
+          raise "Command #{node.parent[0][1]} is in an improper spot."
+        end
+        return
+      end
+
+      raise "Command #{node.parent[0][1]} not found" if command.code.nil?
+      raise "Not inside event $commands" unless @in_list
+      raise "Not inside event page" unless @object_scope.last.is_a?(RPG::Event::Page)
+      page = @object_scope.last
+      page.list << command
     end
+  end
+end
+
+class String
+  def to_b
+    return true if self == "true"
+    return false if self == "false"
+    return true if self == "on"
+    return false if self == "off"
+    return true if self == "yes"
+    return false if self == "no"
+    return true if self == "1"
+    return false if self == "0"
+    raise "Invalid boolean value: #{self}"
   end
 end
 

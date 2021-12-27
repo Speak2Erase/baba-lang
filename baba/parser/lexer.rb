@@ -20,6 +20,7 @@ class BaBaParser
       :constant => :token_constant,
       :eof => :token_eof,
       :sof => :token_sof,
+      :movecommand => :token_movecommand,
     }
     KEYWORDS = {
       "if" => TOKENS[:if],
@@ -110,15 +111,16 @@ class BaBaParser
       return_title
       eval
       raw_command
-      # Move route commands
+    ]
+    MOVE_COMMANDS = %w[
       move
       step
       jump
       turn
       change_speed
       change_frequency
-      move_animation
-      stop_animation
+      set_move_animation
+      set_stop_animation
       direction_fix
       through
       always_on_top
@@ -133,6 +135,7 @@ class BaBaParser
       line_number = 0
       # Iterate through each line
       in_string = false
+      statements = []
       string.each_line do |line|
         line.strip!
         # Add a newline as a terminator
@@ -168,6 +171,16 @@ class BaBaParser
             next
           end
 
+          if MOVE_COMMANDS.include?(current_token)
+            unless statements.empty?
+              if statements.last[1] == "$move_route"
+                line_tokens << [TOKENS[:movecommand], current_token]
+                current_token = ""
+                next
+              end
+            end
+          end
+
           # Figure out what the hell the token is
           case current_token
           when /(is|are)/
@@ -177,9 +190,11 @@ class BaBaParser
           when /\Aend \w*\z/
             line_tokens << [TOKENS[:end], current_token]
             current_token = ""
+            statements.pop
             next
           when /\$\w*/
             line_tokens << [TOKENS[:statement], current_token]
+            statements << [TOKENS[:statement], current_token]
             current_token = ""
             next
           when "if"
@@ -190,7 +205,7 @@ class BaBaParser
             line_tokens << [TOKENS[:else], current_token]
             current_token = ""
             next
-          when /(on|off|true|false)/
+          when /\A(on|off|true|false)\z/
             line_tokens << [TOKENS[:bool], current_token]
             current_token = ""
             next

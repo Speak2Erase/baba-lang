@@ -42,6 +42,11 @@ class BaBaParser
             scope.pop
             waiting_for_endline = false
           end
+          if scope.empty?
+            tree << Node.new([token])
+          else
+            scope.last << Node.new([token])
+          end
         when TOKENS[:eof]
           eof = true
           tree << Node.new([token])

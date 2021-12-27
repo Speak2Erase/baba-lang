@@ -4,7 +4,12 @@ $event 1 is
     name is "test"
     $page 1 is
         trigger is ACTION
-        move_animation is on
+        walk_animation is on
+        step_animation is off
+
+        move_speed = 3
+        move_frequency = 3
+        move_type = CUSTOM
 
         $graphic is
             name is "test"
@@ -17,11 +22,8 @@ $event 1 is
     
         $condition is
             switch 5
+            variable 5 is 15
         end condition
-    
-        move_speed = 3
-        move_frequency = 3
-        move_type = CUSTOM
 
         $move_route is
             move RIGHT
@@ -37,22 +39,6 @@ $event 1 is
             say "multiline string test
                  woah multiline string!"
             say "string with \"strings\" in it!"
-            $textbox is
-                position is MIDDLE
-                window is off
-            end textbox
-            $choices is 
-                choices are "yes" "no"
-                cancel is 1
-                if 1
-                    say "test"
-                else
-                    say "test2"
-                end if
-                if 2
-                    say "test"
-                end if
-            end choices
         end commands
     end page
 end event
