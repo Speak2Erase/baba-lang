@@ -49,6 +49,7 @@ class BaBaParser
     @string = ""
     @in_string = false
     @in_list = false
+    @in_command = false
 
     ap ast, { raw: true }
     ast.each do |node|
@@ -144,6 +145,9 @@ class BaBaParser
           eval("@object_scope.last.#{ALIASES[@var]} = #{value}")
         end
       end
+      if @in_command
+        @object_scope.last.parameters << value
+      end
       @is = false
       @var = nil
     when TOKENS[:bool]
@@ -155,6 +159,24 @@ class BaBaParser
           raise "Variable #{@var} not found" if ALIASES[@var].nil?
           eval("@object_scope.last.#{ALIASES[@var]} = #{value}")
         end
+      end
+      if @in_command
+        @object_scope.last.parameters << value
+      end
+      @is = false
+      @var = nil
+    when TOKENS[:float]
+      value = node.parent[0][1].to_f
+      if @is
+        begin
+          eval("@object_scope.last.#{@var} = #{value}")
+        rescue
+          raise "Variable #{@var} not found" if ALIASES[@var].nil?
+          eval("@object_scope.last.#{ALIASES[@var]} = #{value}")
+        end
+      end
+      if @in_command
+        @object_scope.last.parameters << value
       end
       @is = false
       @var = nil
@@ -171,6 +193,9 @@ class BaBaParser
             raise "Variable #{@var} not found" if ALIASES[@var].nil?
             eval("@object_scope.last.#{ALIASES[@var]} = #{@string}")
           end
+        end
+        if @in_command
+          @object_scope.last.parameters << @string
         end
         @is = false
         @var = nil
@@ -213,6 +238,17 @@ class BaBaParser
       raise "Not inside event page" unless @object_scope.last.is_a?(RPG::Event::Page)
       page = @object_scope.last
       page.list << command
+      @object_scope << command
+      @in_command = true
+    when TOKENS[:newline]
+      unless @in_string
+        if @in_command
+          @object_scope.pop
+        end
+        @in_command = false
+      else
+        @string += "\n"
+      end
     end
   end
 end
