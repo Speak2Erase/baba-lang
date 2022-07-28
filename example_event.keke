@@ -1,6 +1,6 @@
 $event 1 is
     x is 20
-    y is 40 
+    y is 40
     name is "test"
     $page 1 is
         trigger is ACTION
@@ -18,19 +18,19 @@ $event 1 is
             step is 0
             blending is NORMAL
             opacity is 255
-        end graphic
-    
+        end
+
         $condition is
             switch 5
             variable 5 is 15
-        end condition
+        end
 
         $move_route is
             move RIGHT
             move DOWN
             move LEFT
-            move UP 
-        end move_route
+            move UP
+        end
 
         >> Test Comment
         $commands are
@@ -39,6 +39,6 @@ $event 1 is
             say "multiline string test
                  woah multiline string!"
             say "string with \"strings\" in it!"
-        end commands
-    end page
-end event
+        end
+    end
+end
