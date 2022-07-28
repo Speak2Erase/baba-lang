@@ -1,6 +1,6 @@
 require "ap"
 
-class BaBaParser
+class KekeParser
   module AST
     TOKENS = Lexer::TOKENS
     def self.parse(lexer)
@@ -14,7 +14,7 @@ class BaBaParser
       until eof
         token = @lexer.consume
         if string && token[0] != TOKENS[:string] && token[0] != TOKENS[:string_mark] && token[0] != TOKENS[:newline]
-          raise "BabaParser: Unexpected token inside string #{token}"
+          raise "KekeParser: Unexpected token inside string #{token}"
         end
 
         if @lexer.peek[0] == TOKENS[:is] && token[0] == TOKENS[:var]
@@ -62,7 +62,7 @@ class BaBaParser
               # Check if statement has an associated is
               arr << @lexer.consume
             else
-              raise "BabaParser: Unexpected token #{lexer.peek[0]} on line #{token[2]}, #{token[1]}, expected :token_is"
+              raise "KekeParser: Unexpected token #{lexer.peek[0]} on line #{token[2]}, #{token[1]}, expected :token_is"
             end
           end
           node = Node.new(arr)
@@ -110,7 +110,7 @@ class BaBaParser
           else
             node = Node.new([token])
             if scope.empty?
-              raise "BabaParser: Unexpected token #{token} outside of string"
+              raise "KekeParser: Unexpected token #{token} outside of string"
             else
               scope.last << node
             end
@@ -119,9 +119,9 @@ class BaBaParser
         when TOKENS[:string]
           node = Node.new([token])
           if scope.empty?
-            raise "BabaParser: Unexpected string outside in empty scope"
+            raise "KekeParser: Unexpected string outside in empty scope"
           elsif scope.last.parent[0][0] != TOKENS[:string_mark]
-            raise "BabaParser: Unexpected string outside of string mark, scope: #{scope.last.parent[0][0]}"
+            raise "KekeParser: Unexpected string outside of string mark, scope: #{scope.last.parent[0][0]}"
           else
             scope.last << node
           end
