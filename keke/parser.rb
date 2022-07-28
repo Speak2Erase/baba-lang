@@ -1,6 +1,6 @@
 require "ap"
 
-class BaBaParser
+class KekeParser
   require_relative "parser/lexer"
   require_relative "parser/error"
   require_relative "parser/classes"
@@ -85,7 +85,7 @@ class BaBaParser
         event = @object_scope.last
         page_id = node.parent[1][1].to_i - 1
 
-        # Pages start at 1 in the editor and in babalang but at 0 in ruby
+        # Pages start at 1 in the editor and in kekelang but at 0 in ruby
         until event.pages.size - 1 >= page_id
           event.pages << RPG::Event::Page.new
         end
@@ -267,4 +267,4 @@ class String
   end
 end
 
-ap BaBaParser.new.parse(File.read("../example_event.baba")), { raw: true }
+ap KekeParser.new.parse(File.read("../example_event.keke")), { raw: true }

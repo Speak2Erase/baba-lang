@@ -1,6 +1,6 @@
 require_relative "classes"
 
-class BaBaParser
+class KekeParser
   class Lexer
     TOKENS = {
       :is => :token_is,
